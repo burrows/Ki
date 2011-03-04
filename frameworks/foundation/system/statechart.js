@@ -918,7 +918,8 @@ Ki.StatechartManager = {
         len = 0,
         i = 0,
         state = null,
-        trace = this.get('allowTracing');
+        trace = this.get('allowTracing'),
+        attemptedStates = [];
     
     if (this._sendEventLocked || this._goStateLocked) {
       // Want to prevent any actions from being processed by the states until 
@@ -945,6 +946,8 @@ Ki.StatechartManager = {
       state = currentStates[i];
       if (!state.get('isCurrentState')) continue;
       while (!eventHandled && state) {
+        if (attemptedStates.indexOf(state) !== -1) break;
+        attemptedStates.push(state);
         eventHandled = state.tryToHandleEvent(event, arg1, arg2);
         if (!eventHandled) state = state.get('parentState');
         else statechartHandledEvent = YES;

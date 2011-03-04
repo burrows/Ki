@@ -64,8 +64,14 @@ module("Ki.Statechart: With Concurrent States - Send Event Tests", {
           
         }),
         
-        y: Ki.State.design()
-        
+        y: Ki.State.design(),
+
+        numEventEInvocations: 0,
+
+        eventE: function() {
+          var num = this.get('numEventEInvocations');
+          this.set('numEventEInvocations', num + 1);
+        }
       })
       
     });
@@ -166,6 +172,18 @@ test("send event eventD", function() {
   equals(statechart.stateIsCurrentState('c'), false, 'current state not should be c');
   equals(statechart.stateIsCurrentState('e'), false, 'current state not should be e');
   equals(statechart.stateIsCurrentState('y'), true, 'current state should be y');
+});
+
+test("send event eventE", function() {
+  equals(statechart.stateIsCurrentState('c'), true, 'current state should be c');
+  equals(statechart.stateIsCurrentState('e'), true, 'current state should be e');
+
+  statechart.sendEvent('eventE');
+
+  equals(statechart.stateIsCurrentState('c'), true, 'current state should be c');
+  equals(statechart.stateIsCurrentState('e'), true, 'current state should be e');
+
+  equals(statechart.getPath('rootState.numEventEInvocations'), 1, 'eventE should be invoked only once')
 });
 
 test("send event eventZ", function() {
